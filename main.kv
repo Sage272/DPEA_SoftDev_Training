@@ -1,0 +1,132 @@
+<MainScreen>:
+    #: import time __main__.time
+
+    name: 'main'
+    Slider:
+        id: position
+        min: -100
+        max: 100
+        step: 1
+        y: root.height * (1/6)
+        size_hint: (1, 0.2)
+
+    BetterImageButton:
+        id: slider_button
+        size: root.btn_x * 2/3, root.btn_y * 2/3
+        center_x: (root.width * (1/2))
+        center_y: (root.height * (5/12))
+        color: 1, 1, 1, 1
+        source: "WhiteButtonWithBlackBorder.png"
+        mouseover: False
+
+    Label:
+        id: slider_text
+        halign: 'center'
+        font_size: slider_button.width/3
+        text: (str(int(-position.value)) + "%\nCCW") if position.value < 0 else (str(int(position.value)) + "%\nCW") if position.value > 0 else (str(int(position.value)) + "%")
+        color: 0, 0, 0, 1
+        pos_hint: {"y": -(1/12)}
+
+
+
+    BetterImageButton:
+        id: change_button
+        size: root.btn_x, root.btn_y
+        center_x: (root.width * (1/6))
+        center_y: (root.height * (2/3))
+        on_press: root.switch_screen()
+        source: "WhiteButtonWithBlackBorder.png"
+        mouseover_size: True
+        mouseover_color: True
+
+    Label:
+        id: change_button_text
+        halign: 'center'
+        font_size: change_button.width/5
+        text: "Joystick\nScreen"
+        color: 0, 0, 0, 1
+        pos_hint: {"x": -(1/3), "y": (1/6)}
+
+    BetterImageButton:
+        id: power_button
+        size: root.btn_x, root.btn_y
+        center_x: (root.width * (11/24))
+        center_y: (root.height * (2/3))
+        color: 1, 0, 0, 1
+        source: "WhiteButtonWithBlackBorder.png"
+        on_press: root.motor_pressed()
+        mouseover_size: True
+        # mouseover_color: True
+
+    Label:
+        id: power_button_text
+        halign: 'center'
+        font_size: power_button.width/4
+        text: "Motor\nOff"
+        color: 0, 0, 0, 1
+        pos_hint: {"x": -(1/24), "y": (1/6)}
+
+
+    BetterImageButton:
+        id: counter_button
+        size: root.btn_x, root.btn_y
+        center_x: (root.width * (5/6))
+        center_y: (root.height * (2/3))
+        color: 1, 1, 1, 1
+        source: "WhiteButtonWithBlackBorder.png"
+        on_press: root.counter_pressed()
+        mouseover_size: True
+        mouseover_color: True
+
+    Label:
+        id: counter_button_text
+        halign: 'center'
+        font_size: counter_button.width/4
+        text: "0"
+        color: 0, 0, 0, 1
+        pos_hint: {"x": (1/3), "y": (1/6)}
+
+    BetterImageButton:
+        id: motor_script_button
+        size: root.btn_x, root.btn_y
+        center_x: (root.width * (13/24))
+        center_y: (root.height * (2/3))
+        color: 1, 1, 1, 1
+        on_press: root.run_motor_script()
+        source: "WhiteButtonWithBlackBorder.png"
+        mouseover_size: True
+        mouseover_color: True
+
+    Label:
+        id: motor_script_button_text
+        halign: 'center'
+        font_size: motor_script_button.width/4
+        text: "Motor\nScript"
+        color: 0, 0, 0, 1
+        pos_hint: {"x": (1/24), "y": (1/6)}
+
+    BetterImageButton:
+        id: servo_motor_script_button
+        size: root.btn_x, root.btn_y
+        center_x: (root.width * (13/24))
+        center_y: (root.height * (5/6))
+        color: 1, 1, 1, 1
+        on_press: root.spin_servo_motor()
+        source: "WhiteButtonWithBlackBorder.png"
+        mouseover_size: True
+        mouseover_color: True
+
+    Label:
+        id: servo_motor_script_button_text
+        halign: 'center'
+        font_size: motor_script_button.width/4
+        text: "Servo\nMotor"
+        color: 0, 0, 0, 1
+        pos_hint: {"x": (1/24), "y": (1/3)}
+
+
+
+<Slider>:
+    cursor_image: "SliderKnob.png"
+    value_track: True
+    value_track_color: 0.5, 0.5, 0.5, 1
