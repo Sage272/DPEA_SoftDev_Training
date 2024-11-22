@@ -429,7 +429,8 @@ class BetterImageButton(ButtonBehavior, Image):
         # handles the button_id, each button will have a unique number
         self.button_id = BetterImageButton.current_button_id
         BetterImageButton.current_button_id += 1
-        #self.source = "WhiteButtonWithBlackBorder.png"
+        # set the source here for all buttons to have the same image or in you .kv file for a button by button basis
+        self.source = "WhiteButtonWithBlackBorder.png"
 
     # appends the button_id to the end of what self returns to allow for a complete individual reference to each button (the base self return is based off of position, meaning that two buttons could be mixed up)
     def __repr__(self):
