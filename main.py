@@ -100,25 +100,23 @@ class MainScreen(Screen):
     def schedule_servo_motor(self):
         if not self.servo_scheduled:
             self.servo_scheduled = True
-            Clock.schedule_interval(self.check_switch_for_servo_motor, 0.01)
-            self.ids.servo_motor_script_button_text.text = "Motor\nSche-\nduled"
+            Clock.schedule_interval(self.check_switch_for_servo_motor, 0.05)
+            self.ids.servo_motor_script_button_text.text = "Servo\nSche-\nduled"
         else:
             self.servo_scheduled = False
             Clock.unschedule(self.check_switch_for_servo_motor)
-            self.ids.servo_motor_script_button_text.text = "Motor\nUnsch-\neduled"
+            Clock.schedule_once(self.reset_servo_label, 3)
+            self.ids.servo_motor_script_button_text.text = "Servo\nUnsch-\neduled"
 
     def reset_servo_label(self, dt=0):
-        self.ids.servo_motor_script_button_text.text = "Motor\nUnsch-\neduled"
+        self.ids.servo_motor_script_button_text.text = "Servo\nMotor"
 
     def check_switch_for_servo_motor(self, dt=0):
         servo_num = 0
-        if dpiComputer.IN_CONNECTOR__IN_0 == 0:
-            dpiComputer.writeServo(servo_num, 0)
-        else:
+        if dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_0) == 0:
             dpiComputer.writeServo(servo_num, 180)
-        # for i in range(180, 0, -1):
-        #     dpiComputer.writeServo(servo_num, i)
-        #     sleep(0.05)
+        else:
+            dpiComputer.writeServo(servo_num, 0)
 
     def spin_motor(self, dt = None):
         # Some default values
@@ -158,16 +156,14 @@ class MainScreen(Screen):
             Clock.unschedule(self.spin_motor)
 
     def run_motor_script(self):
-        #Clock.schedule_once(self.motor_script)
+        # create new thread so that kivy can update the label in real time
         t = Thread(target=self.motor_script)
         t.start()
-        print("Started Script")
 
     def motor_script(self, dt=0):
+        # disable the button
         self.ids.motor_script_button.disabled = True
 
-        # turns off motor
-        print("Motor Script Button Pressed")
         #  show that motor is on, but disable the button and slider until done with the program
         wait_to_finish_moving_flg = True
         # the stepper that you would like to control
@@ -175,7 +171,10 @@ class MainScreen(Screen):
         # steps control how smooth the motor spins
         one_rev_of_steps = 1600
 
-        print("Sending move command")
+        # displays step count
+        self.display_curr_step_count(stepper_num)
+        # goes home
+        self.return_motor_to_home(stepper_num, wait_to_finish_moving_flg)
         # displays step count
         self.display_curr_step_count(stepper_num)
         # moves motor 15 cw rotations at 1 rotation per second
@@ -219,7 +218,8 @@ class MainScreen(Screen):
         # displays step count
         self.display_curr_step_count(stepper_num)
 
-        Clock.schedule_once(self.set_motor_script_display_normal, 5)
+        # set button label to normal and re-enable the button
+        Clock.schedule_once(self.set_motor_script_display_normal, 3)
         self.ids.motor_script_button.disabled = False
 
     def return_motor_to_home(self, stepper_num = 0, wait_to_finish_moving_flg = True):
@@ -247,7 +247,7 @@ class MainScreen(Screen):
         self.ids.motor_script_button_text.text = "Current\nSteps:\n" + str(curr_steps)
 
     def set_motor_script_display_normal(self, dt=0):
-        self.ids.motor_script_button_text.text = "Motor\nScript"
+        self.ids.motor_script_button_text.text = "Stepper\nScript"
 
     def counter_pressed(self):
         self.ids["counter_button_text"].text = str(int(self.ids["counter_button_text"].text) + 1)
@@ -256,12 +256,12 @@ class MainScreen(Screen):
         self.pressed_var = not self.pressed_var
         if self.pressed_var:
             self.ids['power_button'].color = self.green
-            self.ids['power_button_text'].text = "Motor\nOn"
+            self.ids['power_button_text'].text = "Stepper\nOn"
             self.ids.motor_script_button.disabled = True
             self.schedule_motor(True)
         else:
             self.ids['power_button'].color = self.red
-            self.ids['power_button_text'].text = "Motor\nOff"
+            self.ids['power_button_text'].text = "Stepper\nOff"
             self.schedule_motor(False)
             self.ids.motor_script_button.disabled = False
         if self.ids['power_button'].mouseover_color:
