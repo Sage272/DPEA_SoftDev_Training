@@ -160,8 +160,10 @@ class MainScreen(Screen):
         t = Thread(target=self.motor_script)
         t.start()
 
-    def motor_script(self, dt=0):
+    def motor_script(self):
         # disable the button
+        self.ids.power_button.disabled = True
+        self.ids.change_button.disabled = True
         self.ids.motor_script_button.disabled = True
 
         #  show that motor is on, but disable the button and slider until done with the program
@@ -221,6 +223,8 @@ class MainScreen(Screen):
         # set button label to normal and re-enable the button
         Clock.schedule_once(self.set_motor_script_display_normal, 3)
         self.ids.motor_script_button.disabled = False
+        self.ids.power_button.disabled = False
+        self.ids.change_button.disabled = False
 
     def return_motor_to_home(self, stepper_num = 0, wait_to_finish_moving_flg = True):
         self.set_motor_speed_by_revs_per_sec(10, stepper_num)
